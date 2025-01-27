@@ -1,10 +1,20 @@
 import { Request, Response } from "express";
+import { pick } from "../../../utils";
+import { filterableFields } from "./admin.constant";
 import { AdminServices } from "./admin.services";
 
 // get admin
 const getAdmins = async (req: Request, res: Response) => {
   try {
-    const admins = await AdminServices.getAdmins(req.query);
+    const query = pick(req.query, filterableFields);
+    const filteringOptions = pick(req.query, [
+      "limit",
+      "page",
+      "sortBy",
+      "sortOrder",
+    ]);
+
+    const admins = await AdminServices.getAdmins(query, filteringOptions);
     res.status(200).json({
       success: true,
       message: "Admins fetched successfully",

@@ -1,11 +1,15 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import { searchableFields } from "./admin.constant";
 
 const prisma = new PrismaClient();
 
 // get admins
-const getAdmins = async (query: Record<string, any>) => {
+const getAdmins = async (
+  query: Record<string, any>,
+  filteringOptions: Record<string, unknown>
+) => {
+  const { limit = 20, page = 1 } = filteringOptions;
   const filtering: Prisma.AdminWhereInput[] = [];
-  const searchableFields = ["name", "email", "phone"];
   const { search, ...filterBy } = query;
   if (search) {
     filtering.push({
@@ -29,12 +33,30 @@ const getAdmins = async (query: Record<string, any>) => {
       }),
     });
   }
+  const skip = (Number(page) - 1) * Number(limit);
 
   const whereCondition: Prisma.AdminWhereInput = { AND: filtering };
   const admins = await prisma.admin.findMany({
     where: whereCondition,
+    take: Number(limit),
+    skip,
+    orderBy:
+      filteringOptions.sortBy && filteringOptions.sortOrder
+        ? {
+            [filteringOptions.sortBy as string]:
+              filteringOptions.sortOrder as Prisma.SortOrder,
+          }
+        : {
+            createdAt: Prisma.SortOrder.desc,
+          },
   });
-  return admins;
+  const adminsCount = await prisma.admin.count({ where: whereCondition });
+  const metadata = {
+    page: Number(page),
+    limit: Number(limit),
+    total: adminsCount,
+  };
+  return { metadata, admins };
 };
 
 export const AdminServices = { getAdmins };
