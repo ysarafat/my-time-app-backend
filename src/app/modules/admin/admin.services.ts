@@ -33,6 +33,7 @@ const getAdmins = async (
       }),
     });
   }
+
   const skip = (Number(page) - 1) * Number(limit);
 
   const whereCondition: Prisma.AdminWhereInput = { AND: filtering };
@@ -70,8 +71,14 @@ const getAdminByID = async (id: string) => {
 
   return admin;
 };
+
 // update admin by ID
 const updateAdmin = async (id: string, data: Partial<Admin>) => {
+  await prisma.admin.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
   const updatedData = await prisma.admin.update({
     where: {
       id,
@@ -80,4 +87,5 @@ const updateAdmin = async (id: string, data: Partial<Admin>) => {
   });
   return updatedData;
 };
+
 export const AdminServices = { getAdmins, getAdminByID, updateAdmin };
