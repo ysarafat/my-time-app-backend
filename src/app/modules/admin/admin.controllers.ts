@@ -48,4 +48,23 @@ const getAdminByID = async (req: Request, res: Response) => {
     });
   }
 };
-export const AdminControllers = { getAdmins, getAdminByID };
+// update admin by id
+const updateAdmin = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const data = req.body;
+  try {
+    const updatedData = await AdminServices.updateAdmin(id, data);
+    res.status(200).json({
+      success: true,
+      message: "Admin is updated successfully",
+      data: updatedData,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.name || "Internal server error",
+      error: error,
+    });
+  }
+};
+export const AdminControllers = { getAdmins, getAdminByID, updateAdmin };
