@@ -29,4 +29,23 @@ const getAdmins = async (req: Request, res: Response) => {
   }
 };
 
-export const AdminControllers = { getAdmins };
+// get admin by ID
+const getAdminByID = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const admin = await AdminServices.getAdminByID(id);
+    res.status(200).json({
+      success: true,
+      message: "Admin fetched successfully",
+      data: admin,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.name || "Internal server error",
+      error: error,
+    });
+  }
+};
+export const AdminControllers = { getAdmins, getAdminByID };

@@ -59,4 +59,16 @@ const getAdmins = async (
   return { metadata, admins };
 };
 
-export const AdminServices = { getAdmins };
+// get admin by  id
+const getAdminByID = async (id: string) => {
+  console.log(id);
+  const admin = await prisma.admin.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  return admin;
+};
+
+export const AdminServices = { getAdmins, getAdminByID };
