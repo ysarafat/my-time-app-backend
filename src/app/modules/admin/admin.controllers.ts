@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { pick } from "../../../utils";
+import { sendResponse } from "../../../utils/send-response";
 import { filterableFields } from "./admin.constant";
 import { AdminServices } from "./admin.services";
 
@@ -15,10 +16,12 @@ const getAdmins = async (req: Request, res: Response) => {
     ]);
 
     const admins = await AdminServices.getAdmins(query, filteringOptions);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admins fetched successfully",
-      data: admins,
+      meta: admins?.metadata,
+      data: admins?.admins,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -35,7 +38,8 @@ const getAdminByID = async (req: Request, res: Response) => {
 
   try {
     const admin = await AdminServices.getAdminByID(id);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin fetched successfully",
       data: admin,
@@ -54,7 +58,8 @@ const updateAdmin = async (req: Request, res: Response) => {
   const data = req.body;
   try {
     const updatedData = await AdminServices.updateAdmin(id, data);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin is updated successfully",
       data: updatedData,
@@ -73,7 +78,9 @@ const deleteAdmin = async (req: Request, res: Response) => {
 
   try {
     const deletedData = await AdminServices.deleteAdmin(id);
-    res.status(200).json({
+
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin is deleted successfully",
       data: deletedData,
@@ -93,7 +100,8 @@ const softDeleteAdmin = async (req: Request, res: Response) => {
 
   try {
     const updatedData = await AdminServices.softDeleteAdmin(id);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin is deleted successfully",
       data: updatedData,
