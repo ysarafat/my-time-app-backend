@@ -33,7 +33,9 @@ const getAdmins = async (
       }),
     });
   }
-
+  filtering.push({
+    isDeleted: false,
+  });
   const skip = (Number(page) - 1) * Number(limit);
 
   const whereCondition: Prisma.AdminWhereInput = { AND: filtering };
@@ -65,6 +67,7 @@ const getAdminByID = async (id: string) => {
   const admin = await prisma.admin.findUnique({
     where: {
       id,
+      isDeleted: false,
     },
   });
 
@@ -76,11 +79,13 @@ const updateAdmin = async (id: string, data: Partial<Admin>) => {
   await prisma.admin.findUniqueOrThrow({
     where: {
       id,
+      isDeleted: false,
     },
   });
   const updatedData = await prisma.admin.update({
     where: {
       id,
+      isDeleted: false,
     },
     data,
   });
@@ -110,10 +115,41 @@ const deleteAdmin = async (id: string) => {
   return deletedData;
 };
 
+// soft delete admin
+const softDeleteAdmin = async (id: string) => {
+  await prisma.admin.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+  const updatedData = await prisma.$transaction(async (client) => {
+    const updatedAdmin = await client.admin.update({
+      where: {
+        id,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+    await client.user.update({
+      where: {
+        email: updatedAdmin?.email,
+      },
+      data: {
+        status: "DELETED",
+      },
+    });
+    return updatedAdmin;
+  });
+  return updatedData;
+};
+
 // exports
 export const AdminServices = {
   getAdmins,
   getAdminByID,
   updateAdmin,
   deleteAdmin,
+  softDeleteAdmin,
 };
