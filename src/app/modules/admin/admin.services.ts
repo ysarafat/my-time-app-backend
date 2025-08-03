@@ -63,7 +63,7 @@ const getAdmins = async (
 };
 
 // get admin by  id
-const getAdminByID = async (id: string) => {
+const getAdminByID = async (id: string): Promise<Admin | null> => {
   const admin = await prisma.admin.findUnique({
     where: {
       id,
@@ -75,7 +75,10 @@ const getAdminByID = async (id: string) => {
 };
 
 // update admin by ID
-const updateAdmin = async (id: string, data: Partial<Admin>) => {
+const updateAdmin = async (
+  id: string,
+  data: Partial<Admin>
+): Promise<Admin | null> => {
   await prisma.admin.findUniqueOrThrow({
     where: {
       id,
@@ -93,7 +96,7 @@ const updateAdmin = async (id: string, data: Partial<Admin>) => {
 };
 
 // delete admin
-const deleteAdmin = async (id: string) => {
+const deleteAdmin = async (id: string): Promise<Admin | null> => {
   await prisma.admin.findUniqueOrThrow({
     where: {
       id,
@@ -116,7 +119,7 @@ const deleteAdmin = async (id: string) => {
 };
 
 // soft delete admin
-const softDeleteAdmin = async (id: string) => {
+const softDeleteAdmin = async (id: string): Promise<Admin | null> => {
   await prisma.admin.findUniqueOrThrow({
     where: {
       id,
