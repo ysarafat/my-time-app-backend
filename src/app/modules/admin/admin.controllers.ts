@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { pick, sendResponse } from "../../../utils";
 import { filterableFields } from "./admin.constant";
 import { AdminServices } from "./admin.services";
 
 // get admin
-const getAdmins = async (req: Request, res: Response) => {
+const getAdmins = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const query = pick(req.query, filterableFields);
     const filteringOptions = pick(req.query, [
@@ -23,16 +23,16 @@ const getAdmins = async (req: Request, res: Response) => {
       data: admins?.admins,
     });
   } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.name || "Internal server error",
-      error: error,
-    });
+    next(error);
   }
 };
 
 // get admin by ID
-const getAdminByID = async (req: Request, res: Response) => {
+const getAdminByID = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
 
   try {
@@ -44,15 +44,11 @@ const getAdminByID = async (req: Request, res: Response) => {
       data: admin,
     });
   } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.name || "Internal server error",
-      error: error,
-    });
+    next(error);
   }
 };
 // update admin by id
-const updateAdmin = async (req: Request, res: Response) => {
+const updateAdmin = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   const data = req.body;
   try {
@@ -64,15 +60,11 @@ const updateAdmin = async (req: Request, res: Response) => {
       data: updatedData,
     });
   } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.name || "Internal server error",
-      error: error,
-    });
+    next(error);
   }
 };
 // delete admin by id
-const deleteAdmin = async (req: Request, res: Response) => {
+const deleteAdmin = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   try {
@@ -85,16 +77,15 @@ const deleteAdmin = async (req: Request, res: Response) => {
       data: deletedData,
     });
   } catch (error: any) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: error.name || "Internal server error",
-      error: error,
-    });
+    next(error);
   }
 };
 // soft delete admin by id
-const softDeleteAdmin = async (req: Request, res: Response) => {
+const softDeleteAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
 
   try {
@@ -106,12 +97,7 @@ const softDeleteAdmin = async (req: Request, res: Response) => {
       data: updatedData,
     });
   } catch (error: any) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: error.name || "Internal server error",
-      error: error,
-    });
+    next(error);
   }
 };
 
