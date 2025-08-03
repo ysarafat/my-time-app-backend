@@ -1,7 +1,6 @@
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
-import { AdminRoutes } from "./app/modules/admin/admin.routes";
-import { UserRoutes } from "./app/modules/users/user.routes";
+import router from "./app/routes";
 
 const app: Application = express();
 app.use(cors());
@@ -14,6 +13,7 @@ app.get("/health", (req: Request, res: Response) => {
     message: "Server is running smoothy",
   });
 });
-app.use("/api/v1/users", UserRoutes);
-app.use("/api/v1/admins", AdminRoutes);
+
+app.use("/api/v1", router);
+
 export default app;

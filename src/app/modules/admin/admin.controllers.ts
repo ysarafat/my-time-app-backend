@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { pick } from "../../../utils";
-import { sendResponse } from "../../../utils/send-response";
+import { pick, sendResponse } from "../../../utils";
 import { filterableFields } from "./admin.constant";
 import { AdminServices } from "./admin.services";
 
